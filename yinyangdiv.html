@@ -14,12 +14,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
+            overflow-y: auto;
         }
         h1, h2 {
             text-align: center;
             color: #fff;
+            margin: 10px 0;
         }
         .container, .button-group {
             display: flex;
@@ -30,6 +32,8 @@
             background-color: rgba(0, 0, 0, 0.7); /* Slightly darken background for readability */
             padding: 20px;
             border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
         }
         button {
             padding: 10px 15px;
@@ -41,7 +45,6 @@
             cursor: pointer;
             transition: background-color 0.3s;
             flex: 1 1 auto;
-            max-width: 100px;
             margin: 5px; /* Added margin to create space between buttons */
         }
         button:hover {
@@ -120,6 +123,9 @@
         @media (max-width: 600px) {
             body {
                 padding: 10px;
+            }
+            .container {
+                padding: 15px;
             }
             .slot {
                 width: 80px;
@@ -289,4 +295,3 @@
     </script>
 </body>
 </html>
-
