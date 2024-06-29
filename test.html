@@ -85,22 +85,14 @@
             transition: background-color 0.3s, border-color 0.3s;
             background-color: #fff; /* White background for slots */
             position: relative;
-        }
-        .slot img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            opacity: 0.5; /* Make images semi-transparent */
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
         }
         .slot.active {
             background-color: #007BFF;
             border-color: #007BFF;
-        }
-        .slot-label {
-            position: absolute;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
+            color: white; /* Change text color when active */
         }
         @media (max-width: 600px) {
             body {
@@ -109,12 +101,6 @@
             .slot {
                 width: 80px;
                 height: 80px;
-            }
-            .slot img {
-                width: 60px;
-                height: 60px;
-            }
-            .slot-label {
                 font-size: 14px;
             }
         }
@@ -130,18 +116,9 @@
             <button onclick="clearInput()">Clear</button>
         </div>
         <div class="slots">
-            <div id="slot1" class="slot">
-                <img src="https://example.com/yin.png" alt="Yin">
-                <div class="slot-label">Yin</div>
-            </div>
-            <div id="slot2" class="slot">
-                <img src="https://example.com/st.png" alt="St">
-                <div class="slot-label">St</div>
-            </div>
-            <div id="slot3" class="slot">
-                <img src="https://example.com/yang.png" alt="Yang">
-                <div class="slot-label">Yang</div>
-            </div>
+            <div id="slot1" class="slot">Yin</div>
+            <div id="slot2" class="slot">St</div>
+            <div id="slot3" class="slot">Yang</div>
         </div>
         <div class="result" id="result"></div>
         <div class="button-group">
@@ -237,6 +214,9 @@
             }
         }
     </script>
+</body>
+</html>
+
 </body>
 </html>
 
