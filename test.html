@@ -109,7 +109,7 @@
 <body>
     <h1>Yin Yang Divination</h1>
     <div class="container">
-        <input type="text" id="input-number" placeholder="Enter a 3-digit number (e.g., 324)">
+        <input type="text" id="input-number" placeholder="Enter a 3-digit number (e.g., 324)" inputmode="numeric" pattern="[1-9]{3}" maxlength="3" oninput="validateInput()">
         <span id="input-error" class="error-message"></span>
         <div class="button-group">
             <button onclick="calculateDivination()">DIV</button>
@@ -128,6 +128,11 @@
     </div>
 
     <script>
+        function validateInput() {
+            const inputField = document.getElementById('input-number');
+            inputField.value = inputField.value.replace(/[^1-9]/g, '');
+        }
+
         function calculateDivination() {
             const inputNumber = document.getElementById('input-number').value;
             const errorElement = document.getElementById('input-error');
@@ -216,7 +221,3 @@
     </script>
 </body>
 </html>
-
-</body>
-</html>
-
