@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lei Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFFFFF;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin: 10px 0;
+        }
+        .main-menu, .content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-y: auto;
+            height: 100%;
+        }
+        .main-menu.active, .content.active {
+            display: flex;
+        }
+        .menu-button, .back-button, button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00C300;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .menu-button:hover, .back-button:hover, button:hover {
+            background-color: #00A600;
+        }
+        .menu-button:active, .back-button:active, button:active {
+            background-color: #008A00;
+        }
+        input, textarea {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 300px;
+            border-radius: 5px;
+            border: 1px solid #000;
+            color: #333;
+        }
+        textarea {
+            height: 150px;
+            max-height: 300px;
+            min-height: 150px;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            background-color: #fff;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #000;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            height: 150px;
+            max-height: 300px;
+            min-height: 150px;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+        .slots {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .slot {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            transition: background-color 0.3s, border-color 0.3s;
+            background-color: #fff;
+            position: relative;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        .slot small {
+            font-size: 12px;
+            color: #333;
+        }
+        .slot.active {
+            background-color: #FFD700;
+            border-color: #FFD700;
+            color: black;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+        }
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+        }
+        .centered-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        @media (max-width: 600px) {
+            .slot {
+                width: 80px;
+                height: 80px;
+                font-size: 18px;
+            }
+        }
+        .selected {
+            background-color: #FFD700;
+            color: black;
+        }
+        /* Add the background image to the divination section */
+        #divination {
+            background: url('/mnt/data/TYL red.jpg') no-repeat center center;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="main-title">Lei Tool</h1>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="main-menu active">
+        <button class="menu-button" onclick="showContent('line-report')">Line Report</button>
+        <button class="menu-button" onclick="showContent('coc')">COC</button>
+        <button class="menu-button" onclick="showContent('divination')">Divination</button>
+        <button class="menu-button" onclick="showContent('about-me')">About Me</button>
+    </div>
+
+    <!-- Line Report Content -->
+    <div id="line-report" class="content">
+        <h2>Line Report</h2>
+        <div class="button-group">
+            <button onclick="autoClipboard('B3,day,101\nB3,morning,101')">B3 Morning</button>
+            <button onclick="autoClipboard('臣，定海正緣，正六品神龍武教法師，朝拜玉皇，早安吉祥！\n天利，向各位大人請安！')">Greetings</button>
+            <button onclick="autoClipboard('B7,morning,101\nB3,noon,101')">Noon</button>
+            <button onclick="autoClipboard('謝大人！')">謝大人！</button>
+            <button onclick="autoClipboard('B3,work,101\nBo,scout,101\nBo,heading out,101')">B3 Work</button>
+            <button onclick="autoClipboard('B7,work,101')">B7 Work</button>
+            <button onclick="autoClipboard('Bo,home,101')">Bo Home</button>
+            <button onclick="autoClipboard('B3,3m prep,101')">B3 3m Prep</button>
+            <button onclick="autoClipboard('B7,3m prep,101')">B7 3m Prep</button>
+            <button onclick="autoClipboard('B3,shower,101')">B3 Shower</button>
+            <button onclick="autoClipboard('B7,shower,101')">B7 Shower</button>
+            <button onclick="autoClipboard('B3,dinner,101')">B3 Dinner</button>
+            <button onclick="autoClipboard('B7,dinner,101')">B7 Dinner</button>
+            <button onclick="autoClipboard('B7,noon,101')">B7 Noon</button>
+            <button onclick="autoClipboard('B3,evening,101')">B3 Evening</button>
+            <button onclick="autoClipboard('臣，定海正緣，正六品神龍武教法師，朝拜玉皇，晚安萬福！')">Good Night</button>
+            <button onclick="autoClipboard('B7,evening,101')">B7 Evening</button>
+            <button onclick="autoClipboard('B7,day,101')">B7 Day</button>
+        </div>
+        <input type="text" id="custom-message" placeholder="Enter custom message">
+        <div class="centered-buttons">
+            <button onclick="addCustomMessage('B3')">B3</button>
+            <button onclick="clearCustomMessage()">Clear</button>
+            <button onclick="addCustomMessage('B7')">B7</button>
+        </div>
+        <textarea id="combined-report" class="result"></textarea>
+        <div class="bottom-buttons">
+            <button onclick="clearCombinedReport()">Clear</button>
+            <button onclick="shareClipboard()">Share</button>
+        </div>
+        <button class="back-button" onclick="showMainMenu()">Back to Main Menu</button>
+    </div>
+
+    <!-- COC Content -->
+    <div id="coc" class="content">
+        <h2>COC Report</h2>
+        <input type="text" id="coc-town" placeholder="Town Number" maxlength="2" inputmode="numeric" pattern="\d*">
+        <input type="text" id="coc-stars" placeholder="Stars (0-3)" inputmode="numeric" pattern="[0-3]*">
+        <span id="coc-error" class="error-message"></span>
+        <button onclick="addCOCReport()">Attack Complete</button>
+        <textarea id="coc-combined-report" class="result"></textarea>
+        <div class="bottom-buttons">
+            <button onclick="clearCombinedCOCReport()">Clear</button>
+            <button onclick="copyCombinedCOCReport()">Copy</button>
+            <button onclick="shareCombinedCOCReport()">Share</button>
+        </div>
+        <button class="back-button" onclick="showMainMenu()">Back to Main Menu</button>
+    </div>
+
+    <!-- Divination Content -->
+    <div id="divination" class="content">
+        <h2>Divination</h2>
+        <input type="text" id="question" placeholder="What is your question?">
+        <div class="centered-buttons">
+            <button id="qButton" class="menu-button" onclick="setQuestionType('Q')">Q</button>
+            <button id="cButton" class="menu-button" onclick="setQuestionType('C')">C</button>
+        </div>
+        <input type="text" id="input-number" placeholder="Enter a 3-digit number (e.g., 324)" inputmode="numeric" pattern="[1-9]{3}" maxlength="3" oninput="validateInput()">
+        <span id="input-error" class="error-message"></span>
+        <div class="centered-buttons">
+            <button class="menu-button" onclick="clearDivinationInputs()">Clear Inputs</button>
+        </div>
+        <div class="centered-buttons">
+            <button class="menu-button" onclick="calculateDivination()">DIV</button>
+        </div>
+        <div class="slots">
+            <div id="slot1" class="slot">
+                阴
+                <small>Yin</small>
+            </div>
+            <div id="slot2" class="slot">
+                St
+            </div>
+            <div id="slot3" class="slot">
+                阳
+                <small>Yang</small>
+            </div>
+        </div>
+        <div id="divination-result" class="result"></div>
+        <div class="bottom-buttons">
+            <button class="menu-button" onclick="clearDivination()">Clear</button>
+            <button class="menu-button" onclick="copyDivinationResult()">Copy</button>
+            <button class="menu-button" onclick="shareDivinationResult()">Share</button>
+        </div>
+        <button class="back-button" onclick="showMainMenu()">Back to Main Menu</button>
+    </div>
+
+    <!-- About Me Content -->
+    <div id="about-me" class="content">
+        <h2>About Me</h2>
+        <p>Created by Tin Lei 6/28/24</p>
+        <button class="back-button" onclick="showMainMenu()">Back to Main Menu</button>
+    </div>
+
+    <div class="footer">Created by Tin Lei 2024</div>
+
+    <script>
+        function showMainMenu() {
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+            document.getElementById('main-menu').classList.add('active');
+            document.getElementById('main-title').style.display = 'block';
+        }
+
+        function showContent(contentId) {
+            document.getElementById('main-menu').classList.remove('active');
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+            document.getElementById(contentId).classList.add('active');
+            document.getElementById('main-title').style.display = 'none';
+        }
+
+        // Line Report Functions
+        function autoClipboard(text) {
+            const combinedReport = document.getElementById('combined-report');
+            if (combinedReport.value !== '') {
+                combinedReport.value += '\n'; // Add a new line before appending the new message
+            }
+            combinedReport.value += text;
+            copyToClipboard(combinedReport.value.trim()); // Copy the content without trailing new lines
+        }
+
+        function addCustomMessage(prefix) {
+            const customMessage = document.getElementById('custom-message').value;
+            const message = `${prefix},"${customMessage}",101`;
+            autoClipboard(message);
+        }
+
+        function clearCustomMessage() {
+            document.getElementById('custom-message').value = '';
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        function shareClipboard() {
+            const clipboardText = document.getElementById('combined-report').value.trim();
+            if (navigator.share && clipboardText) {
+                navigator.share({
+                    title: 'Line Report',
+                    text: clipboardText,
+                }).catch(error => console.log('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
+        function clearCombinedReport() {
+            document.getElementById('combined-report').value = '';
+            clearCustomMessage();
+        }
+
+        // COC Functions
+        function addCOCReport() {
+            const town = document.getElementById('coc-town').value;
+            const stars = document.getElementById('coc-stars').value;
+            const errorElement = document.getElementById('coc-error');
+            errorElement.textContent = '';
+
+            if (!/^\d{1,2}$/.test(town) || !/^[0-3]$/.test(stars)) {
+                errorElement.textContent = 'Invalid input. Please enter a valid town number (1-99) and stars (0-3).';
+                return;
+            }
+            const report = `B1, #${town} ${stars} ${stars === '1' ? 'star' : 'stars'}, war attack 1010, 101\n`;
+            document.getElementById('coc-combined-report').value += report;
+            document.getElementById('coc-town').value = '';
+            document.getElementById('coc-stars').value = '';
+        }
+
+        function copyCombinedCOCReport() {
+            const combinedReport = document.getElementById('coc-combined-report').value;
+            copyToClipboard(combinedReport);
+        }
+
+        function shareCombinedCOCReport() {
+            const combinedReport = document.getElementById('coc-combined-report').value;
+            if (navigator.share && combinedReport) {
+                navigator.share({
+                    title: 'COC Combined Report',
+                    text: combinedReport,
+                }).catch(error => console.log('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
+        function clearCombinedCOCReport() {
+            document.getElementById('coc-combined-report').value = '';
+        }
+
+        // Divination Functions
+        let questionType = '';
+
+        function setQuestionType(type) {
+            questionType = type;
+            document.getElementById('qButton').classList.toggle('selected', type === 'Q');
+            document.getElementById('cButton').classList.toggle('selected', type === 'C');
+        }
+
+        function validateInput() {
+            const inputField = document.getElementById('input-number');
+            inputField.value = inputField.value.replace(/[^1-9]/g, '');
+        }
+
+        function calculateDivination() {
+            const question = document.getElementById('question').value.trim();
+            const inputNumber = document.getElementById('input-number').value;
+            const errorElement = document.getElementById('input-error');
+            errorElement.textContent = '';
+            const resultElement = document.getElementById('divination-result');
+
+            if (!/^[1-9]{3}$/.test(inputNumber)) {
+                errorElement.textContent = 'Invalid input. Please enter a 3-digit number with digits between 1 and 9.';
+                return;
+            }
+
+            const slots = ['Yin', 'St', 'Yang'];
+            const slotElements = ['slot1', 'slot2', 'slot3'];
+            let currentSlotIndex = 0;
+
+            function highlightSlot(index) {
+                slotElements.forEach((slotId, i) => {
+                    document.getElementById(slotId).classList.toggle('active', i === index);
+                });
+            }
+
+            function processNextDigit(digitIndex) {
+                if (digitIndex >= inputNumber.length) {
+                    const finalSlot = slots[currentSlotIndex];
+                    if (question && questionType) {
+                        resultElement.textContent += `${questionType}: ${question}\n${inputNumber}\n${finalSlot}\n\n`;
+                    } else {
+                        resultElement.textContent = '';
+                    }
+                    return;
+                }
+
+                const digit = parseInt(inputNumber[digitIndex], 10);
+
+                function highlightStep(step, delay) {
+                    setTimeout(() => {
+                        currentSlotIndex = (currentSlotIndex + 1) % 3;
+                        highlightSlot(currentSlotIndex);
+
+                        if (step < digit - 1) {
+                            highlightStep(step + 1, delay * 0.9);
+                        } else {
+                            setTimeout(() => processNextDigit(digitIndex + 1), delay);
+                        }
+                    }, delay);
+                }
+
+                highlightStep(0, 500);
+            }
+
+            highlightSlot(currentSlotIndex);
+            processNextDigit(0);
+        }
+
+        function clearDivination() {
+            document.getElementById('question').value = '';
+            document.getElementById('input-number').value = '';
+            document.getElementById('divination-result').textContent = '';
+            document.getElementById('input-error').textContent = '';
+            ['slot1', 'slot2', 'slot3'].forEach(slotId => {
+                document.getElementById(slotId).classList.remove('active');
+            });
+            questionType = '';
+            document.getElementById('qButton').classList.remove('selected');
+            document.getElementById('cButton').classList.remove('selected');
+        }
+
+        function clearDivinationInputs() {
+            document.getElementById('question').value = '';
+            document.getElementById('input-number').value = '';
+            document.getElementById('input-error').textContent = '';
+        }
+
+        function copyDivinationResult() {
+            const resultText = document.getElementById('divination-result').textContent;
+            if (resultText) {
+                const textarea = document.createElement('textarea');
+                textarea.value = resultText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function shareDivinationResult() {
+            const resultText = document.getElementById('divination-result').textContent;
+            if (navigator.share && resultText) {
+                navigator.share({
+                    title: 'Yin Yang Divination Result',
+                    text: resultText,
+                }).catch(error => console.log('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
