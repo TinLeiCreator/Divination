@@ -32,7 +32,7 @@
             border-radius: 10px;
         }
         button {
-            padding: 15px 25px;
+            padding: 10px 15px;
             font-size: 16px;
             border: none;
             border-radius: 5px;
@@ -41,7 +41,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
             flex: 1 1 auto;
-            max-width: 200px;
+            max-width: 100px;
             margin: 5px; /* Added margin to create space between buttons */
         }
         button:hover {
@@ -50,7 +50,10 @@
         button:active {
             background-color: #004080;
         }
-        input {
+        button.selected {
+            background-color: #FFD700; /* Gold color for selected buttons */
+        }
+        input, textarea {
             padding: 10px;
             font-size: 16px;
             margin: 10px 0;
@@ -63,6 +66,15 @@
         .result {
             font-size: 18px;
             margin-top: 20px;
+            background-color: #fff;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            white-space: pre-wrap;
+            overflow-y: auto; /* Allow scrolling if content overflows */
+            max-height: 200px; /* Set max height for the result box */
         }
         .error-message {
             color: red;
@@ -78,6 +90,7 @@
             width: 100px;
             height: 100px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             border: 2px solid #ccc;
@@ -85,14 +98,24 @@
             transition: background-color 0.3s, border-color 0.3s;
             background-color: #fff; /* White background for slots */
             position: relative;
-            font-size: 18px;
+            font-size: 24px; /* Increased font size for Chinese text */
             font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        .slot small {
+            font-size: 12px;
             color: #333;
         }
         .slot.active {
-            background-color: #007BFF;
-            border-color: #007BFF;
-            color: white; /* Change text color when active */
+            background-color: #FFD700; /* Gold color for active slots */
+            border-color: #FFD700;
+            color: black; /* Change text color when active */
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
         }
         @media (max-width: 600px) {
             body {
@@ -101,7 +124,7 @@
             .slot {
                 width: 80px;
                 height: 80px;
-                font-size: 14px;
+                font-size: 18px; /* Increased font size for Chinese text */
             }
         }
     </style>
@@ -109,31 +132,54 @@
 <body>
     <h1>Yin Yang Divination</h1>
     <div class="container">
+        <input type="text" id="question" placeholder="What is your question?">
+        <div class="button-group">
+            <button id="qButton" onclick="setQuestionType('Q')">Q</button>
+            <button id="cButton" onclick="setQuestionType('C')">C</button>
+        </div>
         <input type="text" id="input-number" placeholder="Enter a 3-digit number (e.g., 324)" inputmode="numeric" pattern="[1-9]{3}" maxlength="3" oninput="validateInput()">
         <span id="input-error" class="error-message"></span>
         <div class="button-group">
             <button onclick="calculateDivination()">DIV</button>
-            <button onclick="clearInput()">Clear</button>
         </div>
         <div class="slots">
-            <div id="slot1" class="slot">Yin</div>
-            <div id="slot2" class="slot">St</div>
-            <div id="slot3" class="slot">Yang</div>
+            <div id="slot1" class="slot">
+                阴
+                <small>Yin</small>
+            </div>
+            <div id="slot2" class="slot">
+                St
+            </div>
+            <div id="slot3" class="slot">
+                阳
+                <small>Yang</small>
+            </div>
         </div>
         <div class="result" id="result"></div>
         <div class="button-group">
             <button onclick="copyToClipboard()">Copy to Clipboard</button>
             <button onclick="shareResult()">Share</button>
+            <button onclick="clearInput()">Clear</button>
         </div>
     </div>
+    <div class="footer">Created by Tin Lei 2024</div>
 
     <script>
+        let questionType = '';
+
+        function setQuestionType(type) {
+            questionType = type;
+            document.getElementById('qButton').classList.toggle('selected', type === 'Q');
+            document.getElementById('cButton').classList.toggle('selected', type === 'C');
+        }
+
         function validateInput() {
             const inputField = document.getElementById('input-number');
             inputField.value = inputField.value.replace(/[^1-9]/g, '');
         }
 
         function calculateDivination() {
+            const question = document.getElementById('question').value.trim();
             const inputNumber = document.getElementById('input-number').value;
             const errorElement = document.getElementById('input-error');
             errorElement.textContent = '';
@@ -141,14 +187,12 @@
 
             if (!/^[1-9]{3}$/.test(inputNumber)) {
                 errorElement.textContent = 'Invalid input. Please enter a 3-digit number with digits between 1 and 9.';
-                resultElement.textContent = '';
                 return;
             }
 
             const slots = ['Yin', 'St', 'Yang'];
             const slotElements = ['slot1', 'slot2', 'slot3'];
-            let currentSlotIndex = 0; // Starting from Slot 1 (Yin)
-            let countIndex = 0; // To keep track of the counts
+            let currentSlotIndex = 0;
 
             function highlightSlot(index) {
                 slotElements.forEach((slotId, i) => {
@@ -156,10 +200,31 @@
                 });
             }
 
+            function getCurrentTimestamp() {
+                const now = new Date();
+                const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const day = dayNames[now.getDay()];
+                const date = now.getDate();
+                const month = now.getMonth() + 1; // Months are zero-indexed
+                const year = now.getFullYear();
+                let hours = now.getHours();
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // The hour '0' should be '12'
+                return `${month}/${date}/${year}\n${hours}:${minutes}:${seconds} ${ampm}\n${day}`;
+            }
+
             function processNextDigit(digitIndex) {
                 if (digitIndex >= inputNumber.length) {
                     const finalSlot = slots[currentSlotIndex];
-                    resultElement.textContent = `Final Landing: ${finalSlot}`;
+                    const timestamp = getCurrentTimestamp();
+                    if (question && questionType) {
+                        resultElement.textContent += `${questionType}: ${question}\n${inputNumber}\n${finalSlot}\n\n${timestamp}\n\n`;
+                    } else {
+                        resultElement.textContent = '';
+                    }
                     return;
                 }
 
@@ -171,14 +236,14 @@
                         highlightSlot(currentSlotIndex);
 
                         if (step < digit - 1) {
-                            highlightStep(step + 1, delay * 0.9); // Speed up by 10% each step
+                            highlightStep(step + 1, delay * 0.9);
                         } else {
                             setTimeout(() => processNextDigit(digitIndex + 1), delay);
                         }
                     }, delay);
                 }
 
-                highlightStep(0, 500); // Start with a delay of 500ms
+                highlightStep(0, 500);
             }
 
             highlightSlot(currentSlotIndex);
@@ -186,12 +251,16 @@
         }
 
         function clearInput() {
+            document.getElementById('question').value = '';
             document.getElementById('input-number').value = '';
             document.getElementById('result').textContent = '';
             document.getElementById('input-error').textContent = '';
             ['slot1', 'slot2', 'slot3'].forEach(slotId => {
                 document.getElementById(slotId).classList.remove('active');
             });
+            questionType = '';
+            document.getElementById('qButton').classList.remove('selected');
+            document.getElementById('cButton').classList.remove('selected');
         }
 
         function copyToClipboard() {
@@ -203,7 +272,6 @@
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                alert('Result copied to clipboard');
             }
         }
 
