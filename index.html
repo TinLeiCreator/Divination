@@ -30,11 +30,12 @@
             gap: 20px;
             width: 100%;
             max-width: 600px;
-            background-color: #FFFFFF;
+            background: url('file:///D:/Project/html create/your-background-image.png') no-repeat center center;
+            background-size: cover;
             padding: 20px;
             border-radius: 10px;
             overflow-y: auto;
-            height: 100%;
+            height: auto;
         }
         .main-menu.active, .content.active {
             display: flex;
@@ -159,8 +160,19 @@
         }
         /* Add the background image to the divination section */
         #divination {
-            background: url('TYL red.jpg') no-repeat center center;
+            background: url('file:///D:/Project/html create/your-background-image.png') no-repeat center center;
             background-size: cover;
+        }
+        /* Maintain green buttons for divination section */
+        #divination .menu-button, #divination .back-button {
+            background-color: #00C300;
+            color: white;
+        }
+        #divination .menu-button:hover, #divination .back-button:hover {
+            background-color: #00A600;
+        }
+        #divination .menu-button:active, #divination .back-button:active {
+            background-color: #008A00;
         }
     </style>
 </head>
@@ -487,3 +499,4 @@
     </script>
 </body>
 </html>
+
